@@ -125,24 +125,6 @@ class BubbleWidget(Widget):
 				# self.y += step
 			
 		
-		
-		'''
-		if not(man.isJump):
-			if keys[pygame.K_UP]:
-				man.isJump = True
-		else:
-			if man.jumpCount >= -10:
-				neg = 1
-				if man.jumpCount < 0:
-					neg = -1
-				man.y -= int((man.jumpCount ** 2) * 0.5 * neg)
-				man.jumpCount -= 1
-
-			else:
-				man.isJump = False
-				man.jumpCount = 10
-		'''
-		
 		if self.parent and self.y > Window.height:
 			self.parent.remove_widget(self)
 
