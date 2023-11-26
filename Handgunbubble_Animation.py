@@ -90,7 +90,7 @@ class BubbleWidget(Widget):
 
 
 	def movement_x(self, dt):
-		step = 100
+		step = 200
 		scale = 1
 		
 		stepsize = step * scale * self.fps
