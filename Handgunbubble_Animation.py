@@ -113,16 +113,6 @@ class BubbleWidget(Widget):
 
 				self.y_remaining -= step
 				self.y += step
-			# else:
-				# self.going_up = False
-				# if self.y_remaining <= self.down:
-					# step = (self.y_remaining ** 2) * scale * self.fps
-				
-				# if self.y_remaining < 0:
-					# step *= -1
-
-				# self.y_remaining -= 1
-				# self.y += step
 			
 		
 		if self.parent and self.y > Window.height:
