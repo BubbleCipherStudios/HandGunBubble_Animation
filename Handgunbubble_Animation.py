@@ -24,6 +24,7 @@ from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.label import Label
+from kivy.metrics import dp
 
 #Needed for compiling exe with additional files per Kivy Docs
 from kivy.resources import resource_add_path, resource_find
@@ -40,9 +41,9 @@ class BubbleWidget(Widget):
 		self.size_hint_x = None
 		self.size_hint_y = None
 		self.pos = pos
-		self.size = (20,20)
+		self.size = (dp(20),dp(20))
 		self.velocity = velocity
-		self.maximum_size = velocity[2]
+		self.maximum_size = dp(velocity[2])
 		blue = Color(0,0,1,1)
 		self.bubble = Ellipse(size=self.size,pos=self.pos)
 		self.canvas.add(blue)
@@ -59,17 +60,17 @@ class BubbleWidget(Widget):
 		self.bind(pos=self.redraw)
 		self.bind(size=self.redraw)
 		
-		self.fps = 1/100
+		self.fps = 1/60
 	
 	def redraw(self, *args):
 		self.bubble.size = self.size
 		self.bubble.pos = self.pos
 		
 	def movement_v1(self, dt):
-		step = 150
+		step = dp(100)
 		scale = 1
 		
-		stepsize = step * scale * self.fps
+		stepsize = step * scale * dt
 
 		x = self.pos[0]+(stepsize * self.velocity[0])
 		y = self.pos[1]+(stepsize * self.velocity[1])
@@ -81,27 +82,24 @@ class BubbleWidget(Widget):
 		
 	
 	def growBubble(self, dt):
-		step = 150
+		step = self.maximum_size
 		
-		stepsize = step * self.fps
+		stepsize = step * dt
 
 		if self.size[0]+stepsize < self.maximum_size:
 			self.y -= stepsize/2
 			self.x += stepsize/2
 			diameter = stepsize+self.width
-			
 			self.size = (diameter,diameter)
 		else:
 			
 			self.size = (self.maximum_size,self.maximum_size)
 			self.grown_bubble = True
-			self.grow_clock.cancel()
-			
 				
 			if self.parent:
 				self.parent.add_bubble()
-			if self.x > Window.width:
-				print("clock is still running for growbubble!")
+
+			self.grow_clock.cancel()
 			self.main_clock = Clock.schedule_interval(self.movement_v1, self.fps)
 			
 		
@@ -178,7 +176,7 @@ class MainLayout(FloatLayout):
 		for bubble in self.children[:]:
 			if bubble.x > Window.width-200:
 				self.remove_widget(bubble)
-				print('deleted by main')		
+				print('deleted by main')
 
 class HandGunBubbleAnimationApp(App):
 	def build(self):
