@@ -3,9 +3,8 @@
 
 from kivy.config import Config
 
-DisplayWidth = 1080
-DisplayHeight = 720
 
+DisplayWidth, DisplayHeight = 1080, 720
 Dimensions = (DisplayWidth, DisplayHeight)
 
 Config.set('graphics', 'width', DisplayWidth)
@@ -36,7 +35,7 @@ from random import randint
 
 
 class BubbleWidget(Widget):
-	def __init__(self, pos=(DisplayWidth/2,DisplayHeight*(5/10)), velocity=[1,0.1, 50],**kwargs):
+	def __init__(self, pos=(500,410), velocity=[1,0.1, 50],**kwargs):
 		super(BubbleWidget, self).__init__(**kwargs)
 		self.size_hint_x = None
 		self.size_hint_y = None
@@ -60,7 +59,7 @@ class BubbleWidget(Widget):
 		self.bind(pos=self.redraw)
 		self.bind(size=self.redraw)
 		
-		self.fps = 1/60
+		self.fps = 1/120
 	
 	def redraw(self, *args):
 		self.bubble.size = self.size
@@ -103,16 +102,31 @@ class BubbleWidget(Widget):
 			self.main_clock = Clock.schedule_interval(self.movement_v1, self.fps)
 			
 		
+class BackgroundWidget(Widget):
+	def __init__(self, **kwargs):
+		super(BackgroundWidget, self).__init__(**kwargs)
+		self.size = Window.size
+		self.pos = (0,0)
+		bg_color = Color(.6,.6,.6,1)
+		self.bg_rectangle = Rectangle(pos=self.pos, size = self.size)
+		
+		self.canvas.add(bg_color)
+		self.canvas.add(self.bg_rectangle)
+		self.bind(size=self.redraw_background)
 	
+	def redraw_background(self, *args):
+		self.size = Window.size
+		self.bg_rectangle = self.size
+		
 class HandImage(Image):
 	def __init__(self, **kwargs):
-		super(HandImage, self).__init__(*kwargs)
+		super(HandImage, self).__init__(**kwargs)
 		self.fit_mode = 'contain'
 		self.source ='handgunbubblewand.png'
 		print('it happened')
 		self.size_hint_x= None
 		self.size_hint_y= None
-		self.size=(DisplayWidth/1.5, DisplayHeight/1.5)
+		self.size=(DisplayWidth/1.1, DisplayHeight/1.1)
 		self.pos = (0, DisplayHeight/5)
 		
 	
@@ -124,17 +138,15 @@ class MainLayout(FloatLayout):
 	def __init__(self,**kwargs):
 		super(MainLayout, self).__init__(**kwargs)
 		self.size = (Window.width, Window.height)
-		black_color = Color(.9,.9,.9,1)
-		self.canvas.add(black_color)
-		self.bg = Rectangle(pos=self.pos, size=self.size)
+		
+		self.bg_widget = BackgroundWidget()
+		
 		
 		self.bubblewand = HandImage()
 		
-		self.canvas.add(self.bg)
-		
-	
-		
+		self.add_widget(self.bg_widget)
 		self.add_widget(self.bubblewand)
+		self.bubble_start_point = (self.bubblewand.width*(5.5/8),self.bubblewand.height*(7.3/10))
 		
 		
 		main_fps = 1/60
@@ -155,8 +167,8 @@ class MainLayout(FloatLayout):
 		self.index = 19
 		
 		
-		self.bind(height=self.redraw_background)
-		self.bind(width=self.redraw_background)
+		self.bind(height=self.bg_widget.redraw_background)
+		self.bind(width=self.bg_widget.redraw_background)
 		
 		self.collision_clock = Clock.schedule_interval(self.check_boundries, main_fps)
 		self.add_bubble()
@@ -170,13 +182,7 @@ class MainLayout(FloatLayout):
 			self.index = 19
 		
 		
-		self.add_widget(BubbleWidget(velocity=rand_vel))
-		
-	
-	def redraw_background(self, *args):
-		self.bg.size = (self.width,self.height)
-		self.bg.pos = self.pos
-		self.canvas.remove(black_color)
+		self.add_widget(BubbleWidget(velocity=rand_vel, pos=self.bubble_start_point))
 		
 		
 		
