@@ -11,7 +11,7 @@ Dimensions = (DisplayWidth, DisplayHeight)
 Config.set('graphics', 'width', DisplayWidth)
 Config.set('graphics', 'height', DisplayHeight)
 
-Config.set('graphics', 'resizable', False)
+#Config.set('graphics', 'resizable', False)
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 
 from kivy.app import App
@@ -36,7 +36,7 @@ from random import randint
 
 
 class BubbleWidget(Widget):
-	def __init__(self, pos=(400,400), velocity=[1,0.1, 50],**kwargs):
+	def __init__(self, pos=(DisplayWidth/2,DisplayHeight*(5/10)), velocity=[1,0.1, 50],**kwargs):
 		super(BubbleWidget, self).__init__(**kwargs)
 		self.size_hint_x = None
 		self.size_hint_y = None
@@ -44,11 +44,11 @@ class BubbleWidget(Widget):
 		self.size = (dp(20),dp(20))
 		self.velocity = velocity
 		self.maximum_size = dp(velocity[2])
-		blue = Color(0,0,1,1)
-		self.bubble = Ellipse(size=self.size,pos=self.pos)
+		blue = Color(1,1,1,1)
+		self.bubble = Ellipse(source='./bubble.png',size=self.size,pos=self.pos)
 		self.canvas.add(blue)
 		self.canvas.add(self.bubble)
-		self.canvas.opacity = 0.7
+		#self.canvas.opacity = 1
 		
 		
 		
@@ -67,7 +67,7 @@ class BubbleWidget(Widget):
 		self.bubble.pos = self.pos
 		
 	def movement_v1(self, dt):
-		step = dp(100)
+		step = dp(60)
 		scale = 1
 		
 		stepsize = step * scale * dt
@@ -82,13 +82,13 @@ class BubbleWidget(Widget):
 		
 	
 	def growBubble(self, dt):
-		step = self.maximum_size
+		step = self.maximum_size*2
 		
 		stepsize = step * dt
 
 		if self.size[0]+stepsize < self.maximum_size:
 			self.y -= stepsize/2
-			self.x += stepsize/2
+			self.x += stepsize/4
 			diameter = stepsize+self.width
 			self.size = (diameter,diameter)
 		else:
@@ -107,26 +107,32 @@ class BubbleWidget(Widget):
 class HandImage(Image):
 	def __init__(self, **kwargs):
 		super(HandImage, self).__init__(*kwargs)
-		
-	
-	def on_parent(self, parent, widget):
-	
-		self.source ='bubblewandtest.png'
+		self.fit_mode = 'contain'
+		self.source ='handgunbubblewand.png'
 		print('it happened')
 		self.size_hint_x= None
 		self.size_hint_y= None
-		self.size=(150, 500)
-		self.pos = (310, 80)
+		self.size=(DisplayWidth/1.5, DisplayHeight/1.5)
+		self.pos = (0, DisplayHeight/5)
+		
+	
+	#def on_parent(self, parent, widget):
+	
+		
 	
 class MainLayout(FloatLayout):
 	def __init__(self,**kwargs):
 		super(MainLayout, self).__init__(**kwargs)
 		self.size = (Window.width, Window.height)
-		self.canvas.add(Color(1,1,1,1))
+		black_color = Color(.9,.9,.9,1)
+		self.canvas.add(black_color)
 		self.bg = Rectangle(pos=self.pos, size=self.size)
+		
 		self.bubblewand = HandImage()
 		
 		self.canvas.add(self.bg)
+		
+	
 		
 		self.add_widget(self.bubblewand)
 		
@@ -135,7 +141,7 @@ class MainLayout(FloatLayout):
 		self.random_velocities = []
 		max_x, min_x = 100, 80
 		max_y, min_y = 40, -10
-		min_size, max_size = 40, 75
+		min_size, max_size = 60, 100
 		
 		for i in range(20):
 			rand_x = randint(min_x, max_x)
@@ -170,6 +176,8 @@ class MainLayout(FloatLayout):
 	def redraw_background(self, *args):
 		self.bg.size = (self.width,self.height)
 		self.bg.pos = self.pos
+		self.canvas.remove(black_color)
+		
 		
 		
 	def check_boundries(self, dt):
