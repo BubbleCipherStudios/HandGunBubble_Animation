@@ -66,7 +66,7 @@ class BubbleWidget(Widget):
 		self.bubble.pos = self.pos
 		
 	def movement_v1(self, dt):
-		step = dp(60)
+		step = dp(100)
 		scale = 1
 		
 		stepsize = step * scale * dt
@@ -87,7 +87,7 @@ class BubbleWidget(Widget):
 
 		if self.size[0]+stepsize < self.maximum_size:
 			self.y -= stepsize/2
-			self.x += stepsize/4
+			self.x += stepsize/20
 			diameter = stepsize+self.width
 			self.size = (diameter,diameter)
 		else:
@@ -107,7 +107,7 @@ class BackgroundWidget(Widget):
 		super(BackgroundWidget, self).__init__(**kwargs)
 		self.size = Window.size
 		self.pos = (0,0)
-		bg_color = Color(.6,.6,.6,1)
+		bg_color = Color(.5,.5,.5,1)
 		self.bg_rectangle = Rectangle(pos=self.pos, size = self.size)
 		
 		self.canvas.add(bg_color)
@@ -146,16 +146,16 @@ class MainLayout(FloatLayout):
 		
 		self.add_widget(self.bg_widget)
 		self.add_widget(self.bubblewand)
-		self.bubble_start_point = (self.bubblewand.width*(5.5/8),self.bubblewand.height*(7.3/10))
+		self.bubble_start_point = (self.bubblewand.width*(5.42/8),self.bubblewand.height*(7.3/10))
 		
 		
 		main_fps = 1/60
 		self.random_velocities = []
 		max_x, min_x = 100, 80
 		max_y, min_y = 40, -10
-		min_size, max_size = 60, 100
+		min_size, max_size = 50, 120
 		
-		for i in range(20):
+		for i in range(40):
 			rand_x = randint(min_x, max_x)
 			rand_y = randint(min_y, max_y)
 			rand_size = randint(min_size, max_size)
@@ -164,7 +164,7 @@ class MainLayout(FloatLayout):
 			self.random_velocities.append(rand_velocity)
 			print(i, '. ', rand_velocity)
 			
-		self.index = 19
+		self.index = 39
 		
 		
 		self.bind(height=self.bg_widget.redraw_background)
@@ -179,7 +179,7 @@ class MainLayout(FloatLayout):
 			self.index -= 1
 		else:
 			rand_vel = self.random_velocities[self.index]
-			self.index = 19
+			self.index = 39
 		
 		
 		self.add_widget(BubbleWidget(velocity=rand_vel, pos=self.bubble_start_point))
